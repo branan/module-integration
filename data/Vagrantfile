@@ -1,0 +1,9 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant::Config.run do |config|
+  config.vm.define :systest do |config|
+    config.vm.box = "systest"
+    config.vm.network :hostonly, "172.30.0.2"
+  end
+end
