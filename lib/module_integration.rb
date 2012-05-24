@@ -5,7 +5,7 @@ require 'test/unit'
 
 Test::Unit.run = true
 
-module Module_acceptance
+module ModuleIntegration
   def self.execute(module_name, dir)
     lib_dir = File.dirname(__FILE__)
     data_dir = File.expand_path("#{lib_dir}/../data/")
@@ -43,11 +43,11 @@ module Module_acceptance
       begin
         setup_options = options.merge({ :tests => ["#{data_dir}/setup"] })
         PuppetAcceptance::TestSuite.new('core-setup', hosts, setup_options, config).run_and_exit_on_failure
-        if File.exists?("#{dir}/acceptance/setup")
-          setup_options = options.merge({ :tests => ["#{dir}/acceptance/setup"] })
+        if File.exists?("#{dir}/integration/setup")
+          setup_options = options.merge({ :tests => ["#{dir}/integration/setup"] })
           PuppetAcceptance::TestSuite.new('acceptance-setup', hosts, setup_options, config).run_and_exit_on_failure
         end
-        options.merge!({ :tests => ["#{dir}/acceptance/test/"]} )
+        options.merge!({ :tests => ["#{dir}/integration/tests"]} )
         PuppetAcceptance::TestSuite.new('acceptance', hosts, options, config).run_and_exit_on_failure
       rescue
         raise $!
