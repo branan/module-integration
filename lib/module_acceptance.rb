@@ -41,11 +41,12 @@ module Module_acceptance
     begin
       hosts = config['HOSTS'].collect { |name,overrides| PuppetAcceptance::Host.create(name, overrides, config['CONFIG']) }
       begin
-        setup = ["#{data_dir}/setup"]
-        setup_options = options.merge({ :tests => setup })
-        PuppetAcceptance::TestSuite.new('setup', hosts, setup_options, config, TRUE).run_and_exit_on_failure
-        setup_options = options.merge({ :tests => ["#{dir}/acceptance/setup"] })
-        PuppetAcceptance::TestSuite.new('acceptance-setup', hosts, setup_options, config, TRUE).run_and_exit_on_failure
+        setup_options = options.merge({ :tests => ["#{data_dir}/setup"] })
+        PuppetAcceptance::TestSuite.new('core-setup', hosts, setup_options, config).run_and_exit_on_failure
+        if File.exists?("#{dir}/acceptance/setup")
+          setup_options = options.merge({ :tests => ["#{dir}/acceptance/setup"] })
+          PuppetAcceptance::TestSuite.new('acceptance-setup', hosts, setup_options, config).run_and_exit_on_failure
+        end
         options.merge!({ :tests => ["#{dir}/acceptance/test/"]} )
         PuppetAcceptance::TestSuite.new('acceptance', hosts, options, config).run_and_exit_on_failure
       rescue
